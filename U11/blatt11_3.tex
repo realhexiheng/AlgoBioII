@@ -1,0 +1,57 @@
+\documentclass[12pt]{article}
+\usepackage[a4paper,left=10mm,right=10mm,top=15mm,bottom=15mm]{geometry}
+\usepackage{amssymb,amsthm,latexsym,amsfonts, amsmath, bm}
+\usepackage[lined,ruled]{algorithm2e}
+\usepackage{extarrows}
+\usepackage{enumerate}
+\usepackage{tikz}
+\usepackage{underoverlap}
+\usepackage{colortbl}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{array}
+\newtheorem*{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\title{Exercises for Algorithmic Bioinformatics II\\
+Assignment 11}
+\author{Xiheng He}
+\date{Januar 2022}
+\linespread{2.0}
+\begin{document}
+\flushright{Wintersemester 2021/22}
+\flushleft{Xiheng He}
+\flushleft{Lisanne Friedrich}
+{\let\newpage\relax\maketitle}
+\begin{flushleft}
+\textbf{Exercise 3 (Conjugate prior distribution, 10P):}
+\newline
+Let $X \sim \mathcal{N}(0,1)$. Show that $\mathcal{N}(0,1)$ is a conjugate prior distribution for $\mu$ and,
+thus, the posterior distribution is a normal distribution.
+\newline\\
+First, show that $$ P(\mu) P(x | \mu) = \frac{1}{2 \pi} \exp(-\frac{x^2}{4}) \exp(-(\mu - \frac{x}{2}^2)) $$
+Then calculate $P(\mu | x)$. Integrate over $\mu$ to calculate the denominator of the Bayes law.
+Use the fact the integral of a probability distribution is 1.
+\newline
+\begin{align*}
+    &P(\mu) = \frac{1}{\sqrt{2 \pi}} \exp(-\frac{\mu^2}{2}) \\
+    &P(x | \mu) = \frac{1}{\sqrt{2 \pi}} \exp(-\frac{1}{2} (x - \mu)^2) \\
+    &P(\mu) P(x | \mu) = \frac{1}{2 \pi} \exp(-\frac{\mu^2}{2}) \exp(-\frac{1}{2} (x - \mu)^2)
+    = \frac{1}{2 \pi} \exp(-\frac{\mu^2}{2}-\frac{1}{2}(x - \mu)^2) \\
+    &= \frac{1}{2 \pi} \exp(-\frac{x^2}{4} - (\mu^2 - x\mu + \frac{x^2}{4})) = \frac{1}{2 \pi} \exp(-\frac{x^2}{4} - (\mu - \frac{x}{2})^2)
+    = \frac{1}{2 \pi} \exp(-\frac{x^2}{4}) \exp(-(\mu - \frac{x}{2}^2)) \\ 
+\end{align*}
+For calculating $P(\mu | x)$ we use Bayes law:
+$$ P(\mu | x) = \frac{P(\mu) P(x | \mu)}{P(x)} $$
+Apply law of total probability to calculate $P(\mu | x)$:
+\begin{align*}
+    P(x) &= \int P(\mu)P(x | \mu) d\mu \\ 
+    &= \frac{1}{2\pi} \exp(-\frac{x^2}{4}) \int exp(-(\mu - \frac{x}{2}^2)) d\mu \\
+    &= \frac{1}{2\pi} \exp(-\frac{x^2}{4})\\ \\
+    P(\mu | x) &= \frac{P(\mu) P(x | \mu)}{P(x)} \\
+    & = \frac{\displaystyle \frac{1}{2 \pi} \exp(-\frac{x^2}{4}) \exp(-(\mu - \frac{x}{2}^2))}{\displaystyle \frac{1}{2\pi} \exp(-\frac{x^2}{4})}  \\
+    & = \frac{1}{\sqrt{\frac{1}{2}} \sqrt{2 \pi}} \exp(-\frac{(\mu - \frac{x}{2})^2}{2 (\sqrt{\frac{1}{2}})^2}) \\
+\end{align*}
+It shows $P(\mu | x)$ follows a normal distribution with parameter $\mu = \frac{x}{2}$ and $\sigma = \sqrt{\frac{1}{2}}$ and thus, 
+$\mathcal{N}(0, 1)$ is a conjugate prior distribution for $\mu$.
+\end{flushleft}
+\end{document}

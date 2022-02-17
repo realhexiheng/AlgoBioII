@@ -1,0 +1,59 @@
+\documentclass{article}
+\usepackage[a4paper,left=10mm,right=10mm,top=15mm,bottom=15mm]{geometry}
+\usepackage{amssymb,amsthm,latexsym,amsfonts, amsmath, bm}
+\usepackage[lined,ruled]{algorithm2e}
+\usepackage{extarrows}
+\usepackage{enumerate}
+\usepackage{tikz}
+\usepackage{underoverlap}
+\usepackage{colortbl}
+\usepackage{graphicx}
+\usepackage{float}
+\newtheorem*{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\title{Exercises for Algorithmic Bioinformatics II\\
+Assignment 5}
+\author{Xiheng He}
+\date{November 2021}
+\linespread{2.0}
+\begin{document}
+\flushright{Wintersemester 2021/22}
+\flushleft{Xiheng He}
+\flushleft{Lisanne Friedrich}
+{\let\newpage\relax\maketitle}
+\begin{flushleft}
+\textbf{Exercise 3 (BLAST Expectation Values, 10P):}
+\newline
+Consider $\lambda = 0.32, K = 0.137, H = 0.401$ and a database of 22 million amino-acids. The best hit
+of length 103 in a query sequence of length 112 has score $s = 65$.
+\newline
+Use the expected length of an average HSP for edge-correction and do not use the sum statistics.
+\begin{enumerate}[(a)]
+    \item Calculate the $E$-value
+    \newline
+    \begin{align*}
+        E = Kmne^{-\lambda \cdot S} = 0.137 \cdot 103 \cdot 112 \cdot e^{-0.32 \cdot 65} = 1.463695 \times 10^{-6}
+    \end{align*}
+    \item Calculate the $E$-value after \textit{Edge-Correction}.
+    \begin{align*}
+        \because H &\approx \frac{\lambda \mu}{E(l)} = \frac{\ln (Kmn)}{E(l)} \Longrightarrow E(l) \approx \frac{\lambda \mu}{H} = \frac{\ln {Kmn}}{H} \\
+        &= \frac{\ln(0.137 \cdot 103 \cdot 112)}{0.401} = 18.3677 \\
+        \therefore N'_1 &= N_1 - E(l) = 103 - 18.3677 = 84.63 \approx 85 \\
+        N'_2 &= N_2 - E(l) = 112 - 18.3677 = 93.6323 \approx 94 \\
+        E' &= N'_1 \cdot N'_2 \cdot K \cdot e^{-\lambda \cdot S} = 85 \cdot 94 \cdot 0.137 \cdot e^{-0.32 \cdot 65} = 1.013776 \times 10^{-6}
+    \end{align*}
+    \item Calculate the $E$-value after \textit{Multiple-Testing-Correction}.
+    \begin{align*}
+        &E'(r = 1) = 2 \cdot E = 2.92739 \times 10^{-6} \\
+        &P \approx 1 - e^{-E'} = 1 - e^{-2.92739 \times 10^{-6}} =2.92739 \times 10^{-6} \\
+        &\Longrightarrow E''_{MTC} = P \cdot \frac{D}{N_2} = 2.92739 \times 10^{-6} \cdot \frac{22 \times 10^6}{103} = 0.625267767 \approx 0.625   
+    \end{align*}     
+    \item Calculate the $E$-value after \textit{Edge-Correction} and \textit{Multiple-Testing-Correction}.
+    \begin{align*}
+        &E'(r = 1) = 2 N'_1 N'_2 K e^{-\lambda S} = 2 \cdot E_{ETC} = 2.027552 \times 10^{-6} \\
+        &P \approx 1 - e^{-E'} = 1 - e^{-2.027552 \times 10^{-6}} =2.0275 \times 10^{-6} \\
+        &\Longrightarrow E''_{MTC} = P \cdot \frac{D}{N_2} = 2.0275 \times 10^{-6} \cdot \frac{22 \times 10^6}{103} = 0.4330689 \approx 0.433  
+    \end{align*}   
+\end{enumerate}
+\end{flushleft}
+\end{document}

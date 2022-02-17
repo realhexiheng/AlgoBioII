@@ -1,0 +1,315 @@
+\documentclass[12pt]{article}
+\usepackage[a4paper,left=10mm,right=10mm,top=15mm,bottom=15mm]{geometry}
+\usepackage{amssymb,amsthm,latexsym,amsfonts, amsmath, bm}
+\usepackage{pgfplots}
+\usepackage[lined,ruled]{algorithm2e}
+\usepackage{extarrows}
+\usepackage{enumerate}
+\usepackage{tikz}
+\usepackage{underoverlap}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{array}
+\usepackage{listings}
+\lstset{ %
+  language=R,                     % the language of the code
+  basicstyle=\footnotesize,       % the size of the fonts that are used for the code
+  numbers=left,                   % where to put the line-numbers
+  numberstyle=\tiny\color{gray},  % the style that is used for the line-numbers
+  stepnumber=1,                   % the step between two line-numbers. If it's 1, each line
+                                  % will be numbered
+  numbersep=5pt,                  % how far the line-numbers are from the code
+  backgroundcolor=\color{white},  % choose the background color. You must add \usepackage{color}
+  showspaces=false,               % show spaces adding particular underscores
+  showstringspaces=false,         % underline spaces within strings
+  showtabs=false,                 % show tabs within strings adding particular underscores
+  frame=single,                   % adds a frame around the code
+  rulecolor=\color{black},        % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. commens (green here))
+  tabsize=2,                      % sets default tabsize to 2 spaces
+  captionpos=b,                   % sets the caption-position to bottom
+  breaklines=true,                % sets automatic line breaking
+  breakatwhitespace=false,        % sets if automatic breaks should only happen at whitespace
+  title=\lstname,                 % show the filename of files included with \lstinputlisting;
+                                  % also try caption instead of title
+  keywordstyle=\color{darkgray},      % keyword style
+  commentstyle=\color{cyan},   % comment style
+  stringstyle=\color{lightgray},      % string literal style
+  escapeinside={\%*}{*)},         % if you want to add a comment within your code
+  morekeywords={*,...}            % if you want to add more keywords to the set
+} 
+\newtheorem{theorem}{Theorem}[section]
+\theoremstyle{definition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}{Definition}[section]
+\title{Algorithmic Bioinformatics II\\
+Homework Assignment I}
+\author{Xiheng He}
+\date{Januar 2022}
+\linespread{2.0}
+\pgfplotsset{compat=1.17}
+\begin{document}
+\maketitle
+\begin{flushleft}
+\textbf{Topic: Optimization} \\
+\textbf{Exercise O1 (Linear Programming, 10P):} \\
+Calculate the maximum of the function
+\begin{equation*}
+    y = -1.5x_1 - x_2
+\end{equation*}
+given the following constraints:
+\begin{align}
+        x_1 + x_2 & \geq 35 \\
+        x_1 & \leq 109 \\
+        23 & \leq x_2 \leq 42 \\
+        x_2 & \leq 27 + 2x_1 \\
+        \forall i : x_i &\geq 0
+\end{align}
+Draft the solution space first by hand, then use, for instance, the R-package \textbf{Rglpk}
+for calculating the optimal values of $x_1$ and $x_2$.
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.8]{linear_programming.png}
+    \caption{Solution space}
+    \label{fig:linear_programming}
+\end{figure}
+As shown in Figure~\ref{fig:linear_programming}, the optimal values of $x_1$ and $x_2$ is given by point $B$
+and the schaded area which is enclosed by the constraints is our solution space.
+Red line is the function to be maximized which means that $x_1$ and $x_2$ should be minimized.
+Move the function line in parallel to the point where it first intersects with solution space, 
+which is the optimal solution of the problem: $B(2.667, 32.333) \Longrightarrow x_1 = 2.667, x_2 = 32.333 \Longrightarrow y = -36.3335$
+\newpage
+\begin{lstlisting}
+    library(slam)
+    library(Rglpk)
+    
+    # Usage 
+    
+    # Rglpk_solve_LP(obj, mat, dir, rhs, bounds = NULL, types = NULL, max = FALSE, control = list(), ...)
+    
+    obj <- c(-1.5, -1)
+    mat <- matrix(c(1, 1, 2, 0, 0, 1, 0, 1, 0, -1, 1, 1, 0, 1), nrow = 7)
+    dir <- c(">=", "<=", ">=", ">=", "<=", ">=", ">=")
+    rhs <- c(35, 109, -27, 23, 42, 0, 0)
+    Rglpk_solve_LP(obj, mat, dir, rhs, bound = NULL, max = TRUE)
+    
+    # optimum
+    
+    # [1] -36.33333
+    
+    # solution
+    
+    # [1]  2.666667 32.333333    
+\end{lstlisting}
+\newpage
+\textbf{Topic: Combinatorial Optimization, Matroids, Greedy-Algorithm} \\
+\textbf{Exercise B1 (Matroids 1, 10P):} \\
+Let $E$ be a set with $|E| = n$ elements. Prove or disprove that $(E, F)$ is a matroid.
+\begin{enumerate}[(a)]
+    \item For a given $p$ in $0 \leq p \leq n$, let $F$ be the set which contains all subsets of $E$ with $p$
+    or less elements.
+    \begin{definition}
+        $(E,F)$ is a independent system, if:
+        \begin{itemize}
+            \item $(M1)$ $\emptyset \in F$
+            \item $(M2)$ $x \subseteq y \in F \Longrightarrow x \in F$
+        \end{itemize}
+    \end{definition}
+    \begin{definition}
+        $(E,F)$ is a matroid, if:
+        \begin{itemize}
+            \item $(E,F)$ is independent system and,
+            \item  $(M_3)$ $x, y \in F \land |x| > |y| \Longrightarrow \exists \chi \in x \setminus y, y \cup {\chi} \in F$
+        \end{itemize}
+    \end{definition}
+    \begin{align*}
+        &M_1 : 0 \leq p \leq n \land \forall S \in F, |S| \leq p \Longrightarrow \emptyset \in F \\
+        &M_2 : \forall x,y, x \subseteq y \in F \Longrightarrow 0 \leq |x| \leq |y| \leq p \Longrightarrow x \in F \\ 
+        &M_1 \land M_2 \Longrightarrow (E,F) \text{ is a independent system} \\
+        &M_3 : \exists x, y \in F \land \exists z, x = y \cup \{z\} \land 0 \leq |y + 1| \leq |x| \leq p \Longrightarrow x, y \in F \land |x| > |y| \\
+        &\Longrightarrow \exists z \in x \setminus y, y \cup \{z\} \in F \\
+        &M_1 \land M_2 \land M_3 \Longrightarrow (E,F) \text{ is a matroid}
+    \end{align*}
+    \item For a given $x, y \in E$ let $F$ be the set of all subsets of $E$ which do not contain $x$ and $y$.
+    \begin{align*}
+        &M_1 : x,y \not\in \emptyset \Longrightarrow \emptyset \in F \\
+        &M_2 : \forall m, x \not\in m \land y \not\in m \Longrightarrow \forall n, m \subseteq n \in F \Longrightarrow m \in F \\
+        &M_1 \land M_2 \Longrightarrow (E,F) \text{ is a independent system} \\
+    \end{align*}
+    \newline
+    For $M_3$ we have to discuss under following conditions:
+    \begin{itemize}
+        \item $$a \in x \land a \in y \lor b \in x \land b\in y \Longrightarrow \exists z \not = a,b \land z \in x \setminus y, y \cup \{z\} \in F \Longrightarrow M_3$$
+        \item $$a \in x \land b \in y \lor a \in y \land b \in x \Longrightarrow \exists z \not = a,b \land z \in x \setminus y, y \cup \{z\} \in F \Longrightarrow M_3$$
+        \item $$ a \not\in x \land b \not\in x \Longrightarrow \exists z \not = a,b \land z \in x \setminus y, y \cup \{z\} \in F \Longrightarrow M_3$$ 
+        \item $$ a \in x \land a,b \not\in y \Longrightarrow z := a, z \in x \setminus y, y \cup \{z\} \in F \Longrightarrow M_3$$
+        \item $$ b \in x \land a,b \not\in y \Longrightarrow z := b, z \in x \setminus y, y \cup \{z\} \in F \Longrightarrow M_3$$
+    \end{itemize}
+    Thus, $(E,F)$ is a matroid as $M_1, M_2, M_3$ are satisfied.
+\end{enumerate}
+\newpage
+\textbf{Exercise B2 (Combinatorial optimization problems, 5P):} \\
+Consider the following combinatorial optimization problems (kOPs from the lecture) and the corre-
+sponding set systems. Define the independent sets $F$ formally and show, that these are independent
+systems, matroids or greedoids. Calculate the basis of these systems. For the following exercise let
+$G = (V,E)$ be a graph with nodes $V$ and edges $E$.
+\begin{enumerate}[(a)]
+    \item \textit{Bipartite Matching:} $V = U \cup W, U = \{u_1, u_2, \ldots, u_n\}$. Set of subsets $X$ of $W$, 
+    which can be matched with $\{u_1, \ldots, u_{|X|}\}$.
+    \begin{itemize}
+        \item obviously, $F$ is indepent set of edges $E$ and $\emptyset \in F$.
+        \item There is a subset $Y$ of $W$ which can be machted with $\{u_1,\ldots,u_{|Y|}\}$, and $\forall y \in F \land y \subset E$, st.
+        its edges come from vertices $\{u_1,\ldots,u_{|Y|}\} \cup Y$. As $ x \subset y \in F$, we denote the vertices of $x$ as $X$,
+        $X$ is a subset of $W$ which can also be matched with $\{u_1, \ldots, u_{|X|}\}$, thus $ x \subseteq y \in F \Longrightarrow x \in F$.
+        $G = (V,E)$ is a independent system.
+    \end{itemize}
+    \item \textit{Spanning tree:} Subset of edges without cycle.
+    \begin{itemize}
+        \item obviously, $F$ is indepent set of all edges $E$ and $\emptyset \in F$.
+        \item $\forall x \subset y \in F \Longrightarrow x \in F$. If $y$ is independent set and $y \in F$, then $x \in F$
+        as $x$ is subset of $y$ without cycle.
+        \item $\exists x, y \in F \land |x| > |y| \Longrightarrow \exists z \in x \setminus y, y \cup \{z\} \in F$.
+        If $x$ has more edges than $y$, then there exists always a edge $z \in x \setminus y$ st. $y \cup \{z\}$ is subset of $E$ without cycle
+        as there is no cycle in both $x$ and $y$. Thus, $ G = (E, F)$ is a matroid.
+        \item As $G = (E,F)$ is a matroid, By definition, the basis of a matroid is $F$.
+    \end{itemize}
+    \item \textit{Travelling-Salesman-Problem:} Subset of edges which are part of a hamiltonian cycle.
+    \begin{itemize}
+        \item obviously, $F$ is indepent set of all edges $E$ and $\emptyset \in F$.
+        \item For set $x$ and $y$: $x \subset y \subseteq E \land y \in F$ 
+        and $x$ is a subset of $y$ which is a part of a hamiltonian cycle st. $x \in F$. obviously that 
+        $x \subset y \land y \in F \Longrightarrow x \in F \Longrightarrow G = (E, F)$ is a independent system.
+    \end{itemize}
+    \item \textit{Matching:} subset of edges which are not pairwise adjacent.
+    \begin{itemize}
+        \item $\emptyset \in F$ as it is not pairwise adjacent.
+        \item $y \in F$ is a subset of edges which are not pairwise adjacent,
+        then for $x \subset y$, x is also a subset of edges which are not pairwise adjacent.
+        Thus, $x \subseteq y \in F \Longrightarrow x \in F$.
+        \item $M_3$ for Matroid does not hold, as we can not ensure that a new edge $z \in x \setminus y$,
+        all edges in $y \cup \{z\}$ are not pairwise adjacent. Thus, $G = (V,E)$ is a independent system.  
+    \end{itemize}
+\end{enumerate}
+\textbf{Exercise B3 (0-1 Knapsack-Implementation, 5P):} \\
+Write programs to solve the 0-1 Knapsack-Problem with the optimal and greedy algorithm. Plot
+$\frac{C_G}{C_O}$ for a given amount of instances $I$ against $|I|$ and $n$.
+\newline
+Please check my jupyter notebook.
+\newline
+\textbf{Exercise B4 (Best-In Greedy, 5P):} \\
+The best-in greedy algorithm for (a) the 0-1 knapsack problem and (b) independence systems can
+result in arbitrarily bad solutions. Define \textit{arbitrarily bad} and give an example while not forgetting
+to justify your answer.
+\newline
+Arbitrarily bad means the algorithm does not always find a good solution in a arbitrary case. In some cases, we could get
+a really absurd answer which leads to a false conclusion.
+\newline
+Consider the following example:
+\begin{itemize}
+    \item 
+    \begin{align*}
+        & \text{maximize } x_1 + k x_2 \\
+        & \text{subject to } x_1 + k x_2 \leq k \text{ where } k \gg 1 \\
+        & x_1, x_2 \in \{0, 1\}
+    \end{align*}
+    \item Greedy algorithm will calculate the value-weight ratio and get $\displaystyle\frac{c_1}{w_1} = 1 \leq \displaystyle\frac{c_2}{w_2} = 1$.
+    \item Greedy alogrithm will give a solution $x_1 = 1, x_2 = 0$ which is not optimal ($x_1 = 0, x_2 = 1$).
+\end{itemize}
+\textbf{Exercise B5 (Matroide 2, 5P):} \\
+Let $M = (E, F)$ be a matroid.
+\begin{enumerate}[(a)]
+    \item Let $S$ be a subset of $E$. Show that $M' = (E \setminus S, F')$ with 
+    $F' = \{I | I \in F, I \subseteq E \setminus S\}$ is a matroid.
+    \newline
+    \begin{align*}
+        &M_1 : M = (E, F) \text{ is a matroid} \Longrightarrow M \text{ is a independent system} \Longrightarrow \emptyset \in F \Longrightarrow \emptyset \subset E \setminus S \Longrightarrow \emptyset \in F' \\
+        &M_2 : \exists x \subseteq y \in F \land x, y \subseteq E \setminus S \Longrightarrow x \subseteq y \in F' \Longrightarrow x \in F' \\
+        &M_3 : \exists x, y \in F \land x \subseteq E \setminus S \land y \subset E \setminus S \Longrightarrow x, y \in F' \land \exists z, z \in x \setminus y \land |x| > |y| \Longrightarrow y \cup \{z\} \in F' \\
+        &M_1 \land M_2 \land M_3 \Longrightarrow M' \text{ is a matroid}
+    \end{align*}
+    \item The dual matroid $M^* = (E, F^*)$ is defined by $F^* = \{F \subseteq E | \exists_{Basis B} F \cap B = \emptyset\}$.
+    Show that $M^*$ is a matroid. Proof that $(E, F^{**}) = (E, F)$ holds.
+    \newline
+    \begin{lemma}[\textbf{Steinitz Exchange Lemma}]%(https://en.wikipedia.org/wiki/Matroid)
+        If ${\displaystyle A}$ and ${\displaystyle B}$ are distinct members of ${\displaystyle {\mathcal {B}}}$ and 
+        ${\displaystyle a\in A\setminus B}$, then there exists an element ${\displaystyle b\in B\setminus A}$ 
+        such that ${\displaystyle (A\setminus \{a\})\cup \{b\}\in {\mathcal {B}}}$.
+    \end{lemma}
+    \begin{itemize}
+        \item $F \not = \emptyset \Longrightarrow F^* = \{F \subseteq E | \exists_{Basis B} F \cap B = \emptyset \} \not = \emptyset$
+        \item $\forall S_1, S_2 \in B \Longrightarrow |S_1| = |S_2| \land \forall a \in S_1 \setminus S_2, \exists b \in S_2 \setminus S_1 \Longrightarrow
+            |S_1| = |S_2| = |S_1 \setminus \{a\} \cup \{b\} | \Longrightarrow (S_1 \setminus \{a\}) \cup \{b\} \in B$
+    \end{itemize}
+    Since $ \forall S \in F, S \subseteq E$, and we know that $F^* = \{F \subseteq E | \exists_{Basis B} F \cap B = \emptyset\}$ and $ \forall B \in F^*, B \subseteq E $
+    as $M^*$ is defind as a matroid. Thus all elements from $B$ and $F$ compose set $E$ st. $F^* := \{E \setminus B', B' \in F\}$. This means that the basis of dual matroid $M^*$
+    is the complement of the basis in the original matroid $M$.
+    \newline
+    Since complement is an involutotory function ${\displaystyle \left(A^{c}\right)^{c}=A} \Longrightarrow (E, F^{**}) = (E, F)$ holds.
+\end{enumerate}
+\newpage
+\textbf{Exercise B6 (Integer-Knapsack, 5P):} \\
+$n$ object types with values $c_i$ and weights $a_i$ are given for the Integer-Knapsack problem. The sum $\sum_{i = 1} ^ n c_i x_i$ is to
+be maximized given the following constraint for the weight: $\sum_{n = 1} ^ n a_i x_i \leq b$.
+\newline
+Consider now $n = 2$ object types with values $c = (2,1)$ and weights $a = (1,2)$. The given knapsack holds up to a weight of 10.
+As additional constraint a maximum of 6 pieces of object type 1 and at least one object of type 2 should be contained.
+Formulate the Integer Knapsack problem as an ILP problem. Define the matrix $A$ and the vectors $b$ and $c$. Draft 
+the valid set as demonstrated in the lecture.
+\begin{align*}
+    & \mathcal{Z}_{ILP} = \max \{cx | ax \leq b, x \in Z_{+}^n\} \\
+    & A = [1,2] \in \mathcal{M}_{1 \times n} \\
+    & b \in \mathcal{M}_{n  \times 1}, \sum_{i = 1}^n b_i = 10 \\
+    & c = [2,1] \in \mathcal{M}_{1 \times n} 
+\end{align*}
+or: \\
+Calculate the maximum of the function:
+\begin{align*}
+    2x_1 + x_2 
+\end{align*}
+given the following constraints:
+\begin{align}
+    & x_1 + 2x_2 \leq 10 \\
+    & x_1 \leq 6 \\
+    & x_2 \geq 1 \\
+    & \forall i: x_i > 0
+\end{align}
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.7]{integer_knapsack.png}
+    \caption{valid set for knapsack}
+    \label{fig:knapsack}
+\end{figure}
+Figure~\ref{fig:knapsack} shows optimal solution for Integer-Knapsack problem should be 14 with $x_1 = 6, x_2 = 2$.
+\newline
+Furthermore, if we convert Integer-Knapsack problem as a 0-1 knapsack problem as following:
+\begin{align}
+    &\text{maximize } \sum_{i = 1}^n c_i x_i \\
+    & \text{subject to } \sum_i w_i x_i \leq 1\\
+    & \forall i, x_i \in \{0, 1\}
+\end{align}
+where we can take the (10) as maximize the indepedent number, (11) constraints that the independent set can and only contain one vertex from same edge and
+(12) indicates that a vertex can be placed in or not in the independent set. (Knapsack $\Longrightarrow$ Independent System $\Longrightarrow$ Indepedent Set)
+\newpage
+\textbf{Exercise B7 (Greedy Integer-Knapsack, 5P):} \\
+In the lecture the greedy algorithm for the knapsack problems has been introduced. For this the given object types 
+(elements $e_i \in E, |E| = n$) are sorted by their values per weight (weight density), such that 
+$\displaystyle\frac{c_1}{a_1} \geq \frac{c_2}{a_2} \geq \dots \geq \frac{c_n}{a_n}$ holds.
+\newline
+let $C_G$ be the greedy solution and $C_{opt}$ the optimal solution. Show that the greedy algorithm of 
+the Integer knapsack has an approximation factor of 2. In order to achieve this show that 
+$C_G \geq \frac{1}{2} C_{opt}$ by finding an upper bound for $C_{opt}$ and a lower bound for $C_G$.
+\newline
+Proof:
+\begin{itemize}
+    \item $C_G$ is the greedy solution for Integer-Knapsack, we split all elements according to their weights.
+    \item let $S$ be a set of elements where $S \subset E$. We denote $w_i$ as the weight for every element in this set 
+    and $W$ for total allowed weight where $\sum w_i \leq W$.
+    \item assume there is a $k$-te element st. $e_k \in E \setminus S$ where $\sum_{e_i \in S} w_i + w_k > W$. 
+    \item We denote $C_{opt}$ as optimal solution. As we know that greedy solution can not be better than optimal solution,
+    we define $\sum_{i = 1}^j c_i e_i$ is the greedy solution and $ j = k - 1$, then: $$\sum_{i = 1}^j c_i e_i \leq C_{opt}$$.
+    \item Since for $k$-te element we get $c_k e_k \leq C_{opt}$ and adding $k$-te element will exceed total allowed weight,
+    thus: $$C_{opt} \leq \sum_{i = 1}^j c_i e_i \leq \sum_{e_i \in S} c_i e_i + c_k e_k \leq C_{opt} + C_{opt} = 2C_{opt} \qed$$
+\end{itemize}
+Therefore, the greedy algorithm of the Integer knapsack has an approximation factor of 2.
+\end{flushleft}
+\end{document}

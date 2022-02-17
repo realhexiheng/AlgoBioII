@@ -1,0 +1,88 @@
+\documentclass[12pt]{article}
+\usepackage[a4paper,left=10mm,right=10mm,top=15mm,bottom=15mm]{geometry}
+\usepackage{amssymb,amsthm,latexsym,amsfonts, amsmath, bm}
+\usepackage[lined,ruled]{algorithm2e}
+\usepackage{extarrows}
+\usepackage{enumerate}
+\usepackage{tikz}
+\usepackage{underoverlap}
+\usepackage{colortbl}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{array}
+\newtheorem*{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\title{Exercises for Algorithmic Bioinformatics II\\
+Assignment 13}
+\author{Xiheng He}
+\date{Februar 2022}
+\linespread{2.0}
+\begin{document}
+\flushright{Wintersemester 2021/22}
+\flushleft{Xiheng He}
+\flushleft{Lisanne Friedrich}
+{\let\newpage\relax\maketitle}
+\begin{flushleft}
+\textbf{Exercise 3 (Markov-Chains II, 10P):}
+\newline
+A woman has three umbrellas, which are either in her office or her flat. Let $X_n$ be the number of
+umbrellas at the place where she currently is. If she leaves her flat in the morning, or the office
+in the afternoon, and it is currently raining, she will take an umbrella with her, if there is one.
+Otherwise she has to take the bus. Consider that the probability of rain for each of her walks is 0.2
+(independent of the previous walk).
+\begin{enumerate}[(a)]
+    \item Create a Markov chain for $X_n$ and determine the respective transition probabilities.
+    \begin{itemize}
+        \item The set of all states $S: = \{0, 1, 2, 3\}$
+        \item The probabilities from state $x_n = 0$ to state $x_n = \{0, 1, 2\}$ are 0, 0, 0,
+        as there are 3 umbrellas in total which meas $x_n + x_{n + 1} \geq 3$.
+        Thus the probability from state $x_n = 0$ to state $x_n = 3$ is 1.
+        Obviously, $P(x_n = 1, x_{n + 1} = 0) = P(x_n = 1, x_{n + 1} = 1) = P(x_n = 2, x_{n + 1} = 0) = 0$.
+        \item $P(x_n = 2, x_{n + 1} = 3) = P(x_n = 3, x_{n + 1} = 2) = P(x_n = 3, x_{n + 1} = 3) = 0$ as
+        the woman can only take one umbrella with her which means $x_n + x_{n + 1} \leq 4$.
+        \item $P(x_n = 1, x_{n + 1} = 2) = P(x_n = 2, x_{n + 1} = 1) = P(x_n = 3, x_{n + 1} = 0) = 0.8$,
+        as these imply that the woman has not taken a umbrella on a no-rainy day with $P = 1 - 0.2 = 0.8$.
+        \item $P(x_n = 1, x_{n + 1} = 3) = P(x_n = 2, x_{n + 1} = 2) = P(x_n = 3, x_{n + 1} = 1) = 0.2$,
+        as these imply that the woman took a umbrella on a rainy day with $P = 0.2$.
+    \end{itemize}
+    Thus, the state transition matrix $A$ is defined as: 
+    \begin{equation*}
+        A = 
+        \left(\begin{array}{ccccc}
+            x_n & 0 & 1 & 2 & 3 \\
+            0 & 0 & 0 & 0 & 1 \\
+            1 & 0 & 0 & 0.8 & 0.2 \\
+            2 & 0 & 0.8 & 0.2 & 0 \\
+            3 & 0.8 & 0.2 & 0 & 0
+        \end{array}\right)
+    \end{equation*}
+    \item Calculate the stationary distribution of the Markov chain and derive from that, with which
+    probability the woman has to take the bus.
+    \newline
+    Let $\pi = (a, b, c, d)$ for stationary distribution where $a, b, c, d$ refer to the probability of $x = \{0, 1, 2, 3\}$.
+    \newline
+    \begin{equation*}
+        (a, b, c, d) = (a, b, c, d) \cdot
+        \left(\begin{array}{cccc}
+            0 & 0 & 0 & 1 \\
+            0 & 0 & 0.8 & 0.2 \\
+            0 & 0.8 & 0.2 & 0 \\
+            0.8 & 0.2 & 0 & 0
+        \end{array}\right)
+    \end{equation*}
+    \begin{align}
+        & a \cdot 0 + b \cdot 0 + c \cdot 0 + d \cdot 0.8 = 0.8d = a \\
+        & a \cdot 0 + b \cdot 0 + c \cdot 0.8 + d \cdot 0.2 = 0.8c + 0.2d = b \\
+        & a \cdot 0 + b \cdot 0.8 + c \cdot 0.2 + d \cdot 0 = 0.8b + 0.2c = c \\
+        & a \cdot 1 + b \cdot 0.2 + c \cdot 0 + d \cdot 0 = a + 0.2b = d
+    \end{align}
+    \newpage
+    \begin{itemize}
+        \item from (3): $b = c$
+        \item from (2): $b = c = d$
+        \item thus, $a : b : c : d = 4 : 5 : 5 : 5$, $\pi = (\displaystyle\frac{4}{19}, \displaystyle\frac{5}{19}, \displaystyle\frac{5}{19}, \displaystyle\frac{5}{19})$
+        \item therefore, the probability of taking bus (there is no umbrella AND it is rainy outside) is $P(x = 0 | rain) = \displaystyle\frac{4}{19} \times 0.2 \approx 0.042$
+    \end{itemize}
+\end{enumerate}
+\end{flushleft}
+\end{document}

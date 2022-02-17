@@ -1,0 +1,51 @@
+\documentclass{article}
+\usepackage[a4paper,left=15mm,right=15mm,top=15mm,bottom=15mm]{geometry}
+\usepackage{amssymb,amsthm,latexsym,amsfonts, amsmath, bm}
+\usepackage[lined,ruled]{algorithm2e}
+\usepackage{extarrows}
+\usepackage{enumerate}
+\usepackage{tikz}
+\usepackage{underoverlap}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{float}
+\newtheorem*{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\title{Exercises for Algorithmic Bioinformatics II\\
+Assignment 1}
+\author{Xiheng He}
+\date{November 2021}
+\linespread{1.6}
+\begin{document}
+\flushright{Wintersemester 2021/22}
+\flushleft{Xiheng He}
+\flushleft{Lisanne Friedrich}
+{\let\newpage\relax\maketitle}
+\begin{flushleft}
+\textbf{Exercise 1 (Chang-Lawler proof, 10P):}
+\newline
+Prove the following lemma (also given in the lecture slides):
+\begin{lemma}
+    \normalfont
+    When the CL search excludes a region $R$ of $T$, then there is no $k$-approximate match of
+    $P$ in $T$ that completely contains region $R$.
+\end{lemma}
+Is it also guaranteed that a region is excluded if it contains $\geq  k + 1$ mismatches?
+Prove it or give a counter-example.
+\newline \\
+When count $> k$ loop for searching terminated too early. That leads to more than $k$ mismatches in the region $R$,
+which means that the region should be excluded. That contradicts the lemma.
+\newline \\
+counter-example:
+\newline
+pattern: baaaccaaaabacaba
+\newline
+k = 2
+\newline
+text: aaaabaaacacbabbbabaaaccaaaabacabacccbcaaabcacb
+\newline
+region included: acccbcaa
+\newline
+mismatch = 3
+\end{flushleft}
+\end{document}

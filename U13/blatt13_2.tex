@@ -1,0 +1,81 @@
+\documentclass[12pt]{article}
+\usepackage[a4paper,left=10mm,right=10mm,top=15mm,bottom=15mm]{geometry}
+\usepackage{amssymb,amsthm,latexsym,amsfonts, amsmath, bm}
+\usepackage[lined,ruled]{algorithm2e}
+\usepackage{extarrows}
+\usepackage{enumerate}
+\usepackage{tikz}
+\usepackage{underoverlap}
+\usepackage{colortbl}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{array}
+\newtheorem*{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\title{Exercises for Algorithmic Bioinformatics II\\
+Assignment 13}
+\author{Xiheng He}
+\date{Februar 2022}
+\linespread{2.0}
+\begin{document}
+\flushright{Wintersemester 2021/22}
+\flushleft{Xiheng He}
+\flushleft{Lisanne Friedrich}
+{\let\newpage\relax\maketitle}
+\begin{flushleft}
+\textbf{Exercise 2 (Markov-Chains I, 10P):}
+\newline
+In an exam with only binary questions, the answers are distributed as follows:
+If the answer to the current question is $yes$, then the following answer will be $yes$ with probability
+3/4. If the answer to the current question is $no$, then the following answer will be $no$ with probability
+2/3.
+\begin{enumerate}[(a)]
+    \item determine the fraction of questions with answer $yes$ (you may assume a very long exam).
+    \newline
+    The state transition matrix $A$ is defined as: 
+    \begin{equation*}
+        A = 
+        \left(\begin{array}{ccc}
+            & yes & no \\
+            yes & \displaystyle\frac{3}{4} & \displaystyle\frac{1}{4} \\
+            no & \displaystyle\frac{1}{3} & \displaystyle\frac{2}{3}  \\
+        \end{array}\right)
+    \end{equation*}
+    As markov chain implies a invariant distribution $\pi$, thus
+    \begin{equation*}
+        \pi \cdot A = \pi = 
+        \pi \cdot \left(\begin{array}{cc}
+            \displaystyle\frac{3}{4} & \displaystyle\frac{1}{4} \\
+            \displaystyle\frac{1}{3} & \displaystyle\frac{2}{3}  \\
+        \end{array}\right) = \pi
+    \end{equation*}
+    Denote $x$ for initial state for $yes$ and $y$ for initial state for $no$.
+    \begin{equation*}
+        (x, y) \cdot A =
+        \pi \cdot \left(\begin{array}{cc}
+            \displaystyle\frac{3}{4} & \displaystyle\frac{1}{4} \\
+            \displaystyle\frac{1}{3} & \displaystyle\frac{2}{3}  \\
+        \end{array}\right) = (x,y)
+    \end{equation*}
+    From
+    \begin{align*}
+        \frac{3}{4} x + \frac{1}{3} y & = x \\
+        \frac{1}{4} x + \frac{2}{3} y & = y \\
+    \end{align*}
+    we get
+    \begin{align*}
+       \frac{x}{y} = \frac{4}{3} \\
+    \end{align*}
+    Thus, the fraction of questions with answer $yes$ is $\displaystyle \frac{4}{3 + 4} = \frac{4}{7}$.
+    \item is the Markov chain ergodic?
+    \begin{itemize}
+        \item The Markov chain follows a stationary distribution because the transition probabilities do not depend on $t$.
+        \item The Markov chain is finite recurrent, it has finite number of states and each state is recurrent. s.t. for recurrent time $T_i = \min\{n: x_n = i | x_0 = i\}: P(T_i < \infty)$
+        \item The Markov chain is irreducible because $\forall i, j, p_{ij} > 0$ each state is reachable from each other.
+        \item The Markov chain is aperiodic because for each state it requires ${1, 2, 3, 4,\dots,n}$ steps to get back to 
+        itself which means The $GCD$ of the possible steps to return back is 1.
+    \end{itemize}
+    Thus, the Markov chain is ergodic.
+\end{enumerate}
+\end{flushleft}
+\end{document}

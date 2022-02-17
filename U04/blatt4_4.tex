@@ -1,0 +1,90 @@
+\documentclass{article}
+\usepackage[a4paper,left=10mm,right=10mm,top=15mm,bottom=15mm]{geometry}
+\usepackage{amssymb,amsthm,latexsym,amsfonts, amsmath, bm}
+\usepackage[lined,ruled]{algorithm2e}
+\usepackage{extarrows}
+\usepackage{enumerate}
+\usepackage{tikz}
+\usepackage{underoverlap}
+\usepackage{colortbl}
+\usepackage{graphicx}
+\usepackage{float}
+\newtheorem*{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\title{Exercises for Algorithmic Bioinformatics II\\
+Assignment 4}
+\author{Xiheng He}
+\date{November 2021}
+\linespread{1.8}
+\begin{document}
+\flushright{Wintersemester 2021/22}
+\flushleft{Xiheng He}
+\flushleft{Lisanne Friedrich}
+{\let\newpage\relax\maketitle}
+\begin{flushleft}
+\textbf{Exercise 4 (BLAST $E$-value and $P$-value, 10P):}
+\newline
+Given the following two alignments:
+\newline \\
+\begin{tabular}{|c|c|c|}
+    \hline
+    Length sequence 1 & Length sequence 2 & Score \\
+    \hline
+    100 & 200 & 80 \\
+    \hline
+    100 & 120 & 160 \\
+    \hline
+\end{tabular}
+\newline\\
+and the parameters $K$ = 0.3 and $\lambda$ = 0.1.
+\newline
+\begin{enumerate}[(a)]
+    \item Calculate the $E$-values for both alignments and determine using the poisson distribution the
+    probabilities, of 0, 1, 2 HSPs matching with at least the observed score.
+    \newline
+    $E$-value for alignment 1, 2:
+    \begin{align*}
+        E_1 &= K m_1 n_1 e^{-\lambda S_1} \\
+          &= 0.3 \cdot m_1 \cdot n_1 \cdot e^{-0.1 \cdot S_1} \\
+          &= 0.3 \cdot 100 \cdot 200 \cdot e^{-0.1 80} \\
+          &= 2.01277576742 \approx 2.01 \\
+        E_2 &= K m_2 n_2 e^{-\lambda S_2} \\
+          &= 0.3 \cdot m_2 \cdot n_2 \cdot e^{-0.1 \cdot S_2} \\
+          &= 0.3 \cdot 100 \cdot 120 \cdot e^{-0.1 160} \\
+          &= 0.00040512662 \approx 0.0004
+    \end{align*}
+    Bit score:
+    \begin{align*}
+        S'_1 &= \frac{\lambda \cdot S_1 - \ln K}{\ln 2} = \frac{0.1 \cdot 80 - \ln 0.3}{\ln 2} = 13.2785259213 \approx 13.28 \\
+        S'_2 &= \frac{\lambda \cdot S_2 - \ln K}{\ln 2} = \frac{0.1 \cdot 160 - \ln 0.3}{\ln 2} = 24.8200862484 \approx 24.82
+    \end{align*}
+    Poisson probabilities of 0, 1, 2 HSPs matching with at least the observed score:
+    \begin{align*}
+        P_1(S'_1,0) &= e^{-E_1} = 0.13398867466 \approx 0.13 \\
+        P_1(S'_1,1) &= \frac{e^{-E_1} \cdot E_1 ^ 1}{1!} = 0.26931723608 \approx 0.27 \\
+        P_1(S'_1,2) &= \frac{e^{-E_1} \cdot E_1 ^ 2}{2!} = 0.27066382226 \approx 0.27 \\
+        P_2(S'_2,0) &= e^{-E_2} = 0.99960007998 \approx 0.9996 \\
+        P_2(S'_2,1) &= \frac{e^{-E_2} \cdot E_2 ^ 1}{1!} = 0.00039984003 \approx 0.0004\\
+        P_2(S'_2,2) &= \frac{e^{-E_2} \cdot E_2 ^ 2}{2!} = 7.99680063991 \times 10^8 \approx 0
+    \end{align*}
+    \item Calculate the $P$-values for both alignments. Are both alignments statistically significant?
+    \newline
+    \begin{align*}
+        P_1 &= 1 - e^{-E_1} = 0.86601132533 \approx 0.8660 \\
+        P_2 &= 1 - e^{-E_2} = 0.00039992001 \approx 0.0004
+    \end{align*}
+    \newline
+    According to the $P$-value, the alignment 2 is statistically significant.
+    \item Consider some method which calculates normal-distributed scores ($\mu = \pi $ and $\sigma = e$). How
+    probably is a score of at least 11.3? How do you calculate this probability?
+    \newline
+    PDF of normal distribution:
+    \begin{align*}
+        &f(x) = \frac{1}{\sigma\sqrt{2\pi}} 
+        \exp\left( -\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^{\!2}\,\right) \\
+        &f(11.3) = \frac{1}{e\sqrt{2\pi}} 
+        \exp\left( -\frac{1}{2}\left(\frac{11.3 - \pi}{e}\right)^{\!2}\,\right) = 0.001623988046 \approx 0.0016
+    \end{align*}
+\end{enumerate}
+\end{flushleft}
+\end{document}

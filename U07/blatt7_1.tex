@@ -1,0 +1,72 @@
+\documentclass{article}
+\usepackage[a4paper,left=10mm,right=10mm,top=15mm,bottom=15mm]{geometry}
+\usepackage{amssymb,amsthm,latexsym,amsfonts, amsmath, bm}
+\usepackage[lined,ruled]{algorithm2e}
+\usepackage{extarrows}
+\usepackage{enumerate}
+\usepackage{tikz}
+\usepackage{underoverlap}
+\usepackage{colortbl}
+\usepackage{graphicx}
+\usepackage{float}
+\newtheorem*{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\title{Exercises for Algorithmic Bioinformatics II\\
+Assignment 7}
+\author{Xiheng He}
+\date{December 2021}
+\linespread{2.0}
+\begin{document}
+\flushright{Wintersemester 2021/22} 
+\flushleft{Xiheng He}
+\flushleft{Lisanne Friedrich}
+{\let\newpage\relax\maketitle}
+\begin{flushleft}
+\textbf{Exercise 1 (PAM Matrix, 10P):}
+\newline
+Calculate the $PAM_{i,j}$ values of a 2-PAM matrix from the given count matrix:
+\begin{equation*}
+\begin{array}{c c c c c}
+f_{i,j} & A & B & C & D \\
+A & 0 & 3 & 7 & 9 \\
+B & 3 & 0 & 5 & 1 \\
+C & 7 & 5 & 0 & 8 \\
+D & 9 & 1 & 8 & 0 
+\end{array} 
+\end{equation*}
+\begin{align*}
+    & f_A = \sum_{b \neq A}f_A = 3 + 7 + 9 = 19 \\
+    & f_B = \sum_{b \neq B}f_B = 3 + 5 + 1 = 9 \\
+    & f_C = \sum_{b \neq C}f_C = 7 + 5 + 8 = 20 \\
+    & f_D = \sum_{b \neq D}f_D = 9 + 1 + 8 = 18 \\
+    & f = \sum_a f_a = 19 + 9 + 20 + 18 = 66 \\
+\end{align*}
+\begin{align*}
+    \because & p_A,p_B,p_C,p_D \text{ are not given, assume }p_A = p_B = p_C = p_D = 0.25 \\
+    \because & M_{ab} = \frac{1}{100f} \cdot \frac{f_{ab}}{pa} \land  M^2_{ab} = \sum_c M_{ac} \cdot M_{cb} = M^2_{ab} \land PAM(2)_{i,j} = \log \frac{M^2(i,j)}{f(j)}\\
+    & 
+    \begin{array}{c c c c c}
+        M_{ab} & A & B & C & D \\
+        A & \frac{1631}{1650} & \frac{1}{550} & \frac{7}{1650} & \frac{3}{550} \\
+        B & \frac{1}{550} & \frac{547}{550} & \frac{1}{330} & \frac{1}{1650} \\
+        C & \frac{7}{1650} & \frac{1}{330} & \frac{163}{165} & \frac{4}{825} \\
+        D & \frac{3}{550} & \frac{1}{1650} & \frac{4}{825} & \frac{272}{275}
+    \end{array} \Longrightarrow
+    \begin{array}{c c c c c}
+        M^2_{ab} & A & B & C & D \\
+        A & 0.9762 & 0.0036 & 0.0084 & 0.0108 \\
+        B & 0.0036 & 0.9890 & 0.0060 & 0.0012 \\
+        C & 0.0084 & 0.0060 & 0.9760 & 0.0096 \\
+        D & 0.0108 & 0.0012 & 0.0096 & 0.9784 \\
+    \end{array} \\
+    & \Longrightarrow
+    \begin{array}{c c c c c}
+        PAM(2)_{i,j} & A & B & C & D \\
+        A & -1.289 & -3.398 & -3.377 & -3.222 \\
+        B & -3.722 & -0.959 & -3.523 & -4.176 \\
+        C & -3.354 & -3.176 & -1.312 & -3.273 \\
+        D & -3.245 & -3.875 & -3.319 & -1.265
+    \end{array}
+\end{align*}
+\end{flushleft}
+\end{document}

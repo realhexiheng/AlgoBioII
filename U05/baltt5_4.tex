@@ -1,0 +1,81 @@
+\documentclass{article}
+\usepackage[a4paper,left=10mm,right=10mm,top=15mm,bottom=15mm]{geometry}
+\usepackage{amssymb,amsthm,latexsym,amsfonts, amsmath, bm}
+\usepackage[lined,ruled]{algorithm2e}
+\usepackage{extarrows}
+\usepackage{enumerate}
+\usepackage{tikz}
+\usepackage{underoverlap}
+\usepackage{colortbl}
+\usepackage{graphicx}
+\usepackage{float}
+\newtheorem*{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\title{Exercises for Algorithmic Bioinformatics II\\
+Assignment 5}
+\author{Xiheng He}
+\date{November 2021}
+\linespread{1.8}
+\begin{document}
+\flushright{Wintersemester 2021/22}
+\flushleft{Xiheng He}
+\flushleft{Lisanne Friedrich}
+{\let\newpage\relax\maketitle}
+\begin{flushleft}
+\textbf{Exercise 4 (BLAST Statistics, 10P):}
+\newline
+Use the given target distribution $q(i,j)$ and the frequencies $p(i)$ of a 2-nucleotide genome with
+$\lambda = 0.32$ to calculate
+\begin{enumerate}[(a)]
+    \item all $s_{ij}$ scores
+    \item the \textit{NATS} score
+    \item the expected score of a nucleotide pair in a HSP
+    \item the expected score of a random nucleotide pair in general
+\end{enumerate}
+As always, please explain/justify your results.
+\newline \\
+\begin{table}[H]
+\begin{minipage}[b]{0.48\linewidth}
+    \centering
+    \begin{tabular}[]{c|c|c}
+        q(i,j) & C & G \\
+        \hline
+        C & 0.48 & 0.02 \\
+        \hline
+        G & 0.04 & 0.46
+    \end{tabular}
+\end{minipage}
+\begin{minipage}[b]{0.48\linewidth}
+    \centering
+    \begin{tabular}[]{c|c|c}
+        p(i) & C & G \\
+        \hline
+        & 0.55 & 0.45
+    \end{tabular}
+\end{minipage}
+\end{table}
+\begin{enumerate}[(a)]
+    \item 
+    \begin{align*}
+        s_{ij} &= (\ln(\frac{q_{ij}}{p_i \cdot p_j}) \cdot \frac{1}{\lambda}) \\
+        & \Longrightarrow \\
+        s_{cc} &= \ln(\frac{0.48}{0.55 \cdot 0.55} \cdot \frac{1}{0.32}) = 1.4428 \\
+        s_{cg} &= \ln(\frac{0.02}{0.55 \cdot 0.45} \cdot \frac{1}{0.32}) = -7.8615 \\
+        s_{gc} &= \ln(\frac{0.04}{0.45 \cdot 0.55} \cdot \frac{1}{0.32}) = -5.6954 \\
+        s_{gg} &= \ln(\frac{0.46}{0.45 \cdot 0.45} \cdot \frac{1}{0.32}) = 2.5640
+    \end{align*}
+    \item
+    \begin{align*}
+        H(NATS) &= \lambda \sum_{i,j} s_{ij} \cdot q(i,j) = 0.32 \times (0.48 \times 1.4428 + 0.02 \times -7.8615 + 0.04 \times -5.6954 + 0.46 \times 2.5640)) = 0.4758 \\
+    \end{align*}
+    \item 
+    \begin{align*}
+        E_{HSP} = \frac{H}{\lambda} = \frac{0.4758}{0.32} = 1.4869
+    \end{align*}
+    \item 
+    \begin{align*}
+        E = \sum_{i,j} p_i p_j s_{ij} = 0.55 \times 0.55 \times 1.4428 + 0.45 \times 0.55 \times -7.8615 + 0.45 \times 0.55 \times -5.6954 + 0.45 \times 0.45 \times 2.5640 = -2.3997
+    \end{align*}
+\end{enumerate}
+\end{flushleft}
+\end{document}

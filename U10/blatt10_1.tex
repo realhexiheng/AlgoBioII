@@ -1,0 +1,104 @@
+\documentclass{article}
+\usepackage[a4paper,left=10mm,right=10mm,top=15mm,bottom=15mm]{geometry}
+\usepackage{amssymb,amsthm,latexsym,amsfonts, amsmath, bm}
+\usepackage[lined,ruled]{algorithm2e}
+\usepackage{extarrows}
+\usepackage{enumerate}
+\usepackage{tikz}
+\usepackage{underoverlap}
+\usepackage{colortbl}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{array}
+\newtheorem*{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\title{Exercises for Algorithmic Bioinformatics II\\
+Assignment 10}
+\author{Xiheng He}
+\date{Januar 2022}
+\linespread{2.0}
+\begin{document}
+\flushright{Wintersemester 2021/22}
+\flushleft{Xiheng He}
+\flushleft{Lisanne Friedrich}
+{\let\newpage\relax\maketitle}
+\begin{flushleft}
+\textbf{Task 1: Simple Orthodox and Bayesian Statistics (10P):}
+\newline
+\textbf{Coin tossing}
+\newline
+You are modelling a set of fair and biased coins. Fair coins show head and tail with equal probability,
+whereas a biased coin will show head with a probability of 7/8.
+\begin{enumerate}[(a)]
+    \item In order to find out, whether a given coin is fair, you throw it 10 times. How are the proba-
+    bilities of each outcome for every coin (e.g. 5x head)?
+    \newline \\
+    \begin{tabular}{|m{10em}|m{10em}|m{15em}|}
+    \hline
+    \textbf{outcome} & \textbf{fair coin} & \textbf{biased coin} \\
+    \hline
+    \textbf{0 head, 10 tail} & $\tbinom{10}{0}(\displaystyle\frac{1}{2})^{10} = 0.0010$ & $\tbinom{10}{0}(\displaystyle\frac{1}{8})^{10} = 0.0000$ \\ 
+    \hline
+    \textbf{1 head, 9 tail} & $\tbinom{10}{1}(\displaystyle\frac{1}{2})^{10} = 0.0098$ & $\tbinom{10}{1}(\displaystyle\frac{1}{8})^{9} \times \frac{7}{8} = 0.0000$ \\
+    \hline
+    \textbf{2 head, 8 tail} & $\tbinom{10}{2}(\displaystyle\frac{1}{2})^{10} = 0.0439$ & $\tbinom{10}{2}(\displaystyle\frac{1}{8})^{8} \times (\frac{7}{8})^2 = 0.0000$ \\
+    \hline
+    \textbf{3 head, 7 tail} & $\tbinom{10}{3}(\displaystyle\frac{1}{2})^{10} = 0.1172$ & $\tbinom{10}{3}(\displaystyle\frac{1}{8})^{7} \times (\frac{7}{8})^3 = 0.0000$ \\
+    \hline
+    \textbf{4 head, 6 tail} & $\tbinom{10}{4}(\displaystyle\frac{1}{2})^{10} = 0.1172$ & $\tbinom{10}{4}\tbinom{10}{4}(\displaystyle\frac{1}{8})^{6} \times (\frac{7}{8})^4 = 0.0005$ \\
+    \hline
+    \textbf{5 head, 5 tail} & $\tbinom{10}{5}(\displaystyle\frac{1}{2})^{10} = 0.2461$ & $\tbinom{10}{5}(\displaystyle\frac{1}{8})^{5} \times (\frac{7}{8})^5 = 0.0039$ \\
+    \hline
+    \textbf{6 head, 4 tail} & $\tbinom{10}{6}(\displaystyle\frac{1}{2})^{10} = 0.1172$ & $\tbinom{10}{6}(\displaystyle\frac{1}{8})^{4} \times (\frac{7}{8})^6 = 0.0230$ \\
+    \hline
+    \textbf{7 head, 3 tail} & $\tbinom{10}{7}(\displaystyle\frac{1}{2})^{10} = 0.1172$ & $\tbinom{10}{7}(\displaystyle\frac{1}{8})^{3} \times (\frac{7}{8})^7 = 0.0920$ \\
+    \hline
+    \textbf{8 head, 2 tail} & $\tbinom{10}{8}(\displaystyle\frac{1}{2})^{10} = 0.0439$ & $\tbinom{10}{8}(\displaystyle\frac{1}{8})^{2} \times (\frac{7}{8})^8 = 0.2416$ \\
+    \hline
+    \textbf{9 head, 1 tail} & $\tbinom{10}{9}(\displaystyle\frac{1}{2})^{10} = 0.0098$ & $\tbinom{10}{9}(\displaystyle\frac{1}{8})^{1} \times (\frac{7}{8})^9 = 0.3758$ \\
+    \hline
+    \textbf{10 head, 0 tail} & $\tbinom{10}{10}(\displaystyle\frac{1}{2})^{10} = 0.0010$ & $\tbinom{10}{10}(\displaystyle\frac{7}{8})^{10} = 0.2631$ \\  
+    \hline
+    \end{tabular}
+    \item After how many tries would you be asserted that your coin is fair/not fair?
+    \newline
+    $X \sim binomial(10, \frac{1}{2})$ \\
+    $H_0: Pr(head) = 0.5, H_1: Pr(head) \neq 0.5$ \\
+    $p = Pr(x \leq 1) + Pr(x \geq 9) = 0.0010 + 0.0098 + 0.0098 + 0.0010 = 0.0216 < 0.05$ \\
+    $p = Pr(x \leq 2) + Pr(x \geq 8) = 0.1094 > 0.05$ \\
+    so we can only reject $H_0$ and assert coin is biased because of $p$-value < 0.05 significance when we tossed a coin 10 times and observed 0, 1, 9, 10 heads.
+    \item Assume that you have 10 coins and that one of the coins is not fair. Would you adapt your
+    trials from (b)?
+    we use likelihood ratio to test whether the coin is fair or not.
+    $H_0: Pr(head) = 0.5, H_1: Pr(head) \neq 0.5$ \\
+    \begin{align*}
+        \Lambda &= \frac{\mathcal{L} (\theta_0|x)}{\mathcal{L} (\theta_1|x)} \\
+        &= \frac{P(d_1,\dots,d_N|H)}{P(d_1,\dots,d_N|-H)} \\
+        & = \frac{9 \cdot \mathcal{L}(p = \frac{1}{2}|k, N)}{1 \cdot \mathcal{L}(p = \frac{7}{8}|k, N)} \\
+        &= 9 \cdot (\frac{4}{7})^{N-k} \\
+    \end{align*}
+    $df = 10 \Longrightarrow \lambda_0 = x_{0.05}^2 = 18.31 > \Lambda \Longrightarrow $ So we Reject $H_0$.
+    \newline
+\textbf{Bayes}
+\newline
+Given a diagnostic method to determine a disease which appears in 1 of 10,000 in a population.
+The method has a false positive rate of 0.001 and a false negative rate of 0.01.
+    \item What is the probability of having the disease, if the test is positive?
+    \newline
+    A : Having disease B : Test positive
+    \begin{align*}
+        &P(B|\overline{A}) = 0.001, P(\overline{B}|A) = 0.01 \Longrightarrow P(\overline{B}|\overline{A}) = 0.999, P(B|A) = 0.99 \\
+        &P(A) = \frac{1}{10000} = 0.0001 \Longrightarrow P(\overline{A}) = 0.9999 \\
+        &P(B) = \sum_n P(B|A_n) = P(B|A)P(A) + P(B|\overline{A})P(\overline{A}) = 1.0989 \times 10^{-3} \Longrightarrow \\
+        &P(A|B) = \frac{P(B|A)P(A)}{P(B)} = \frac{0.99 \cdot 0.0001}{1.0989 \times 10^{-3}} = 0.09009 \\
+    \end{align*}
+    The probability of having the disease when test is positive is 0.09009.
+    \item What is the probability of not having the disease, if the test is negative?
+    \newline \\
+    \begin{align*}
+        P(\overline{A}|\overline{B}) = \frac{P(\overline{B}|\overline{A})P(\overline{A})}{P(\overline{B})} = \frac{0.999 \cdot 0.9999}{1 - 1.0989 \times 10{-3}} = 0.9999
+    \end{align*}
+    The probability of not having the disease when test is negative is 0.9999.
+\end{enumerate}
+\end{flushleft}
+\end{document}
